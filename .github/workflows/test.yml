@@ -1,0 +1,16 @@
+name: test
+on: [push, workflow_dispatch]
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, macos-15-intel, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - if: runner.os == 'Linux'
+        run: echo "/home/linuxbrew/.linuxbrew/bin" >> "$GITHUB_PATH"
+      - run: brew install scriptvox/tap/scriptvox
+      - run: scriptvox --version
+      - run: scriptvox doctor --json || true
+      - run: brew test scriptvox/tap/scriptvox
